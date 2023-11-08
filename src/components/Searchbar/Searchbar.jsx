@@ -1,45 +1,40 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { FaSearch } from 'react-icons/fa';
 
+const Searchbar = ({ onSubmit }) => {
+  const [query, setQuery] = useState('');
 
-class Searchbar extends Component {
-  state = {
-    query: '',
+  const handleChange = (e) => {
+    setQuery(e.target.value);
   };
 
-  handleChange = (e) => {
-    this.setState({ query: e.target.value });
-  };
-
-  handleSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    this.props.onSubmit(this.state.query);
-    this.setState({ query: '' });
+    onSubmit(query);
+    setQuery('');
   };
 
-  render() {
-    return (
-      <StyledSearchbar>
-        <StyledForm onSubmit={this.handleSubmit}>
-            <StyledSearchBtn type="submit">
-              <FaSearch />
-            </StyledSearchBtn>
-          <StyledFormInput
-            className="input"
-            type="text"
-            autoComplete="off"
-            autoFocus
-            placeholder="Search images and photos"
-            value={this.state.query}
-            onChange={this.handleChange}
-          />
-        </StyledForm>
-      </StyledSearchbar>
-    );
-  }
-}
+  return (
+    <StyledSearchbar>
+      <StyledForm onSubmit={handleSubmit}>
+        <StyledSearchBtn type="submit">
+          <FaSearch />
+        </StyledSearchBtn>
+        <StyledFormInput
+          className="input"
+          type="text"
+          autoComplete="off"
+          autoFocus
+          placeholder="Search images and photos"
+          value={query}
+          onChange={handleChange}
+        />
+      </StyledForm>
+    </StyledSearchbar>
+  );
+};
 
 const StyledSearchbar = styled.div`
   top: 0;

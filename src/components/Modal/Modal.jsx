@@ -54,16 +54,16 @@ const StyledOverlay = styled.div`
 `;
 
 const StyledModal = styled.div`
-  max-width: 100%;
-  max-height: 100%;
+  max-width: 90%;
+  max-height: 90%;
   text-align: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   img {
-    max-width: 100%;
-    max-height: 100%;
+    max-width: 90%;
+    max-height: 90%;
   }
 `;
 
