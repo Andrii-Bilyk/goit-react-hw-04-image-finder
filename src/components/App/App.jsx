@@ -6,7 +6,6 @@ import Button from '../Button/Button';
 import Modal from '../Modal/Modal';
 import Loader from '../Loader/Loader';
 import fetchImages from './api';
-import PropTypes from 'prop-types';
 
 function App() {
   const [images, setImages] = useState([]);
@@ -73,14 +72,5 @@ function App() {
     </div>
   );
 }
-
-App.propTypes = {
-  images: PropTypes.array,
-  query: PropTypes.string,
-  page: PropTypes.number,
-  isLoading: PropTypes.bool,
-  showModal: PropTypes.bool,
-  modalImage: PropTypes.string,
-};
 
 export default App;

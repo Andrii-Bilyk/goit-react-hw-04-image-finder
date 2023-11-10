@@ -1,44 +1,41 @@
-import React, { Component } from 'react';
+// Modal.jsx
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-class Modal extends Component {
-  componentDidMount() {
-    window.addEventListener('keydown', this.handleKeyDown);
-  }
+const Modal = ({ src, alt, onClose }) => {
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.code === 'Escape') {
+        onClose();
+      }
+    };
 
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.handleKeyDown);
-  }
+    window.addEventListener('keydown', handleKeyDown);
 
-  handleKeyDown = (e) => {
-    if (e.code === 'Escape') {
-      this.props.onClose();
-    }
-  };
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onClose]);
 
-  handleOverlayClick = (e) => {
+  const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) {
-      this.props.onClose();
+      onClose();
     }
   };
 
-  handleCloseClick = () => {
-    this.props.onClose();
+  const handleCloseClick = () => {
+    onClose();
   };
 
-  render() {
-    const { src, alt } = this.props;
-
-    return (
-      <StyledOverlay onClick={this.handleOverlayClick}>
-        <StyledModal>
-          <img src={src} alt={alt} onClick={this.handleCloseClick}/>
-        </StyledModal>
-      </StyledOverlay>
-    );
-  }
-}
+  return (
+    <StyledOverlay onClick={handleOverlayClick}>
+      <StyledModal>
+        <img src={src} alt={alt} onClick={handleCloseClick} />
+      </StyledModal>
+    </StyledOverlay>
+  );
+};
 
 const StyledOverlay = styled.div`
   position: fixed;
