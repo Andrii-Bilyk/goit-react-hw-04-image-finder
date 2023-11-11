@@ -23,10 +23,13 @@ function App() {
 
     fetchImages(query, page)
       .then((data) => {
-        setImages((prevImages) => [...prevImages, ...data]);
-        setPage((prevPage) => prevPage + 1);
+        if (data.length > 0) {
+          setImages((prevImages) => [...prevImages, ...data]);
+          setPage((prevPage) => prevPage + 1);
+        } else {
+        }
       })
-      .catch((error) => console.error('Error fetching images:', error))
+      .catch((error) => console.error('Помилка отримання зображень:', error))
       .finally(() => {
         setIsLoading(false);
       });
@@ -36,6 +39,7 @@ function App() {
     setQuery(newQuery);
     setImages([]);
     setPage(1);
+    setVisibleImagesCount(12);
   };
 
   const handleOpenModal = (image) => {
