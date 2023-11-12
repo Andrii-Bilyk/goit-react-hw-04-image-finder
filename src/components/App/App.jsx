@@ -14,43 +14,44 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalImage, setModalImage] = useState('');
-  const [visibleImagesCount, setVisibleImagesCount] = useState(12);
-  const [hasMore, setHasMore] = useState(true);
+  const [totalHits, setTotalHits] = useState(0);
+  const perPage = 12;
+
+  const [visibleImagesCount, setVisibleImagesCount] = useState(perPage);
 
   useEffect(() => {
-    if (query === '' || !hasMore) return;
+    if (query === '') return;
 
     setIsLoading(true);
 
     fetchImages(query, page)
       .then((data) => {
-        if (data.length > 0) {
-          setImages((prevImages) => [...prevImages, ...data]);
-          setPage((prevPage) => prevPage + 1);
-        } else {
-          setHasMore(false);
+        if (data.hits.length > 0) {
+          setImages((prevImages) => [...prevImages, ...data.hits]);
+          setTotalHits(data.totalHits);
         }
       })
       .catch((error) => {
-        console.error('Помилка отримання зображень:', error);
+        console.error('Error fetching images:', error);
       })
       .finally(() => {
         setIsLoading(false);
       });
-  }, [query, page, hasMore]);
+  }, [query, page]);
 
   const handleSearch = (newQuery) => {
     setQuery(newQuery);
     setImages([]);
     setPage(1);
-    setVisibleImagesCount(12);
-    setHasMore(true);
+    setTotalHits(0);
     setShowModal(false);
     setModalImage('');
+    setVisibleImagesCount(perPage);
   };
 
   const loadMoreImages = () => {
-    setVisibleImagesCount((prevCount) => prevCount + 12);
+    setPage((prevPage) => prevPage + 1);
+    setVisibleImagesCount((prevCount) => prevCount + perPage);
   };
 
   const handleOpenModal = (image) => {
@@ -66,21 +67,20 @@ function App() {
   return (
     <div>
       <Searchbar onSubmit={handleSearch} />
-      <ImageGallery>
-        {images.slice(0, visibleImagesCount).map((image) => (
-          <ImageGalleryItem
-            key={image.id}
-            src={image.webformatURL}
-            alt={image.tags}
-            onClick={() => handleOpenModal(image)}
-          />
-        ))}
-      </ImageGallery>
-      {hasMore && visibleImagesCount < images.length && (
-        <Button
-          onClick={loadMoreImages}
-          isVisible={!isLoading}
-        />
+      {images.length > 0 && (
+        <ImageGallery>
+          {images.slice(0, visibleImagesCount).map((image) => (
+            <ImageGalleryItem
+              key={image.id}
+              src={image.webformatURL}
+              alt={image.tags}
+              onClick={() => handleOpenModal(image)}
+            />
+          ))}
+        </ImageGallery>
+      )}
+      {totalHits > perPage && images.length < totalHits && (
+        <Button onClick={loadMoreImages} isVisible={!isLoading} />
       )}
       {isLoading && <Loader />}
       {showModal && <Modal src={modalImage} alt="Modal" onClose={handleCloseModal} />}
