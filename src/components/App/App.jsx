@@ -15,9 +15,10 @@ function App() {
   const [showModal, setShowModal] = useState(false);
   const [modalImage, setModalImage] = useState('');
   const [visibleImagesCount, setVisibleImagesCount] = useState(12);
+  const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
-    if (query === '') return;
+    if (query === '' || !hasMore) return;
 
     setIsLoading(true);
 
@@ -27,19 +28,29 @@ function App() {
           setImages((prevImages) => [...prevImages, ...data]);
           setPage((prevPage) => prevPage + 1);
         } else {
+          setHasMore(false);
         }
       })
-      .catch((error) => console.error('Помилка отримання зображень:', error))
+      .catch((error) => {
+        console.error('Помилка отримання зображень:', error);
+      })
       .finally(() => {
         setIsLoading(false);
       });
-  }, [query, page]);
+  }, [query, page, hasMore]);
 
   const handleSearch = (newQuery) => {
     setQuery(newQuery);
     setImages([]);
     setPage(1);
     setVisibleImagesCount(12);
+    setHasMore(true);
+    setShowModal(false);
+    setModalImage('');
+  };
+
+  const loadMoreImages = () => {
+    setVisibleImagesCount((prevCount) => prevCount + 12);
   };
 
   const handleOpenModal = (image) => {
@@ -65,9 +76,9 @@ function App() {
           />
         ))}
       </ImageGallery>
-      {visibleImagesCount < images.length && (
+      {hasMore && visibleImagesCount < images.length && (
         <Button
-          onClick={() => setVisibleImagesCount((prevCount) => prevCount + 12)}
+          onClick={loadMoreImages}
           isVisible={!isLoading}
         />
       )}
